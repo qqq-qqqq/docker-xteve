@@ -1,4 +1,4 @@
-FROM alpine:3.16
+FROM alpine:3.15
 
 ARG TARGETARCH
 
@@ -8,7 +8,7 @@ RUN apk update \
     bash \
     busybox-suid \
     su-exec \
-    ffmpeg4 \
+    ffmpeg \
     vlc \
     wget \
     unzip \
