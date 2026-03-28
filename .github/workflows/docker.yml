@@ -30,6 +30,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: qaqaqqa/xteve
+          tags: |
+            type=raw,value=latest
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -37,5 +39,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
