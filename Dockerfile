@@ -17,7 +17,12 @@ RUN apk add --no-cache \
  && echo $TZ > /etc/timezone \
  && sed -i 's/geteuid/getppid/' /usr/bin/vlc
 
-RUN wget -O /tmp/xteve.zip https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_amd64.zip \
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      ARCH="arm64"; \
+    else \
+      ARCH="amd64"; \
+    fi \
+ && wget -O /tmp/xteve.zip https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_${ARCH}.zip \
  && unzip /tmp/xteve.zip -d /usr/bin/ \
  && rm /tmp/xteve.zip \
  && chmod +x /usr/bin/xteve
