@@ -21,7 +21,6 @@ RUN apk update \
  && rm /tmp/xteve.zip \
  && chmod +x /usr/bin/xteve \
  && apk del unzip \
- && apk cache clean \
  && rm -rf /var/cache/apk
 
 COPY cronjob.sh /cronjob.sh
