@@ -1,20 +1,15 @@
 FROM alpine:3.22
 
-ENV TZ=Europe/Berlin
-
 RUN apk add --no-cache \
     ca-certificates \
     curl \
-    tzdata \
     bash \
     busybox-suid \
     su-exec \
-    ffmpeg \
+    ffmpeg4 \
     vlc \
     wget \
     unzip \
- && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
- && echo $TZ > /etc/timezone \
  && sed -i 's/geteuid/getppid/' /usr/bin/vlc
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
