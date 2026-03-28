@@ -10,7 +10,7 @@ RUN apk update \
     vlc \
     wget \
     unzip \
- && sed -i 's/geteuid/getppid/' /usr/bin/vlc
+ && sed -i 's/geteuid/getppid/' /usr/bin/vlc \
  && if [ "$TARGETARCH" = "arm64" ]; then \
       ARCH="arm64"; \
     else \
