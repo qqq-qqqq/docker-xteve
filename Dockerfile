@@ -1,45 +1,36 @@
-FROM alpine:latest
-RUN apk update
-RUN apk upgrade
-RUN apk add --no-cache ca-certificates
+FROM alpine:3.22
 
-MAINTAINER alturismo alturismo@gmail.com
-
-# Extras
-RUN apk add --no-cache curl
-
-# Timezone (TZ)
-RUN apk update && apk add --no-cache tzdata
 ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Add Bash shell & dependancies
-RUN apk add --no-cache bash busybox-suid su-exec
+RUN apk add --no-cache \
+    ca-certificates \
+    curl \
+    tzdata \
+    bash \
+    busybox-suid \
+    su-exec \
+    ffmpeg \
+    vlc \
+    wget \
+    unzip \
+ && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+ && echo $TZ > /etc/timezone \
+ && sed -i 's/geteuid/getppid/' /usr/bin/vlc
 
-# Volumes
-VOLUME /config
-VOLUME /root/.xteve
-VOLUME /tmp/xteve
+RUN wget -O /tmp/xteve.zip https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_amd64.zip \
+ && unzip /tmp/xteve.zip -d /usr/bin/ \
+ && rm /tmp/xteve.zip \
+ && chmod +x /usr/bin/xteve
 
-# Add ffmpeg and vlc
-RUN apk add ffmpeg
-RUN apk add vlc
-RUN sed -i 's/geteuid/getppid/' /usr/bin/vlc
+COPY cronjob.sh /cronjob.sh
+COPY entrypoint.sh /entrypoint.sh
+COPY sample_cron.txt /sample_cron.txt
+COPY sample_xteve.txt /sample_xteve.txt
 
-# Add xTeve and guide2go
-RUN wget https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_amd64.zip -O temp.zip; unzip temp.zip -d /usr/bin/; rm temp.zip
-ADD cronjob.sh /
-ADD entrypoint.sh /
-ADD sample_cron.txt /
-ADD sample_xteve.txt /
+RUN chmod +x /entrypoint.sh /cronjob.sh
 
-# Set executable permissions
-RUN chmod +x /entrypoint.sh
-RUN chmod +x /cronjob.sh
-RUN chmod +x /usr/bin/xteve
+VOLUME ["/config"]
 
-# Expose Port
 EXPOSE 34400
 
-# Entrypoint
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
