@@ -11,11 +11,11 @@ RUN apk update \
     wget \
     unzip \
  && sed -i 's/geteuid/getppid/' /usr/bin/vlc \
- && if [ "$TARGETARCH" = "arm64" ]; then \
-      ARCH="arm64"; \
-    else \
-      ARCH="amd64"; \
-    fi \
+ && case "$TARGETARCH" in \
+    "amd64") ARCH="amd64" ;; \
+    "arm64") ARCH="arm64" ;; \
+    *) echo "unsupported arch $TARGETARCH" && exit 1 ;; \
+    esac \
  && wget -O /tmp/xteve.zip https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_${ARCH}.zip \
  && unzip /tmp/xteve.zip -d /usr/bin/ \
  && rm /tmp/xteve.zip \
