@@ -1,6 +1,6 @@
-ARG TARGETARCH
-
 FROM alpine:3.16
+
+ARG TARGETARCH
 
 RUN apk update \
  && apk add --no-cache \
