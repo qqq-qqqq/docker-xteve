@@ -1,8 +1,8 @@
-FROM alpine:3.22
+FROM alpine:3.16
 
-RUN apk add --no-cache \
+RUN apk update \
+ && apk add --no-cache \
     ca-certificates \
-    curl \
     bash \
     busybox-suid \
     su-exec \
@@ -11,8 +11,7 @@ RUN apk add --no-cache \
     wget \
     unzip \
  && sed -i 's/geteuid/getppid/' /usr/bin/vlc
-
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
+ && if [ "$TARGETARCH" = "arm64" ]; then \
       ARCH="arm64"; \
     else \
       ARCH="amd64"; \
@@ -20,7 +19,10 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
  && wget -O /tmp/xteve.zip https://github.com/xteve-project/xTeVe-Downloads/raw/master/xteve_linux_${ARCH}.zip \
  && unzip /tmp/xteve.zip -d /usr/bin/ \
  && rm /tmp/xteve.zip \
- && chmod +x /usr/bin/xteve
+ && chmod +x /usr/bin/xteve \
+ && apk del unzip \
+ && apk cache clean \
+ && rm -rf /var/cache/apk
 
 COPY cronjob.sh /cronjob.sh
 COPY entrypoint.sh /entrypoint.sh
